@@ -47,7 +47,7 @@
 
         * {
           -webkit-print-color-adjust: exact !important;
-          color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
         .printable-area * {
           color: black !important;
@@ -266,6 +266,18 @@
                 value="10:10"
               />
             </div>
+            <div>
+              <label for="serialNo" class="block text-sm font-medium mb-1"
+                >Serial No.</label
+              >
+              <input
+                id="serialNo"
+                type="text"
+                class="input-field"
+                value=""
+                placeholder="Enter Serial Number"
+              />
+            </div>
             <div class="md:col-span-2">
               <label for="purpose" class="block text-sm font-medium mb-1"
                 >Purpose</label
@@ -298,16 +310,19 @@
       <!-- Gate Pass Document -->
       <div
         id="printableArea"
-        class="printable-area bg-white border-2 border-gray-800 p-8 font-serif"
+        class="printable-area bg-white border border-black p-8 font-serif"
       >
         <!-- Header -->
         <div
-          class="flex justify-between items-center mb-6 border-b border-gray-300 pb-2"
+          class="flex justify-between items-center mb-6 border-b border-gray-400 pb-3"
         >
-          <div class="text-sm font-bold text-gray-700">
+          <div class="flex-1 text-center text-lg font-bold text-gray-800">
             दक्षिण रेलवे / SOUTHERN RAILWAY
           </div>
-          <div class="text-sm font-bold text-gray-700">एल. एम. / L.M. 74</div>
+          <div class="text-sm font-bold text-gray-700 w-24 text-right">
+            एल. एम. / L.M. 74
+          </div>
+          <!-- Fixed width for right alignment -->
         </div>
 
         <!-- Title -->
@@ -317,125 +332,169 @@
           </h1>
         </div>
 
-        <!-- To and Date Section -->
-        <div class="mb-6">
-          <div class="flex justify-between items-center mb-2">
-            <div class="text-sm text-gray-700">सेवा में / To</div>
-            <div class="flex items-center">
-              <span class="text-sm mr-4 text-gray-700">दिनांक / Date</span>
-              <span id="displayDate" class="dotted-underline text-center">
+        <!-- To, Date, and Serial Section -->
+        <div class="flex justify-between items-start mb-6">
+          <div class="text-sm text-gray-700">
+            <div>सेवा में / To</div>
+            <div>निरीक्षक, सुरक्षा दल / Inspector of Protection Force</div>
+            <div>S&T Workshop PTJ</div>
+          </div>
+          <div class="text-right">
+            <div class="flex items-center justify-end mb-1">
+              <span class="text-sm mr-2 text-gray-700">दिनांक / Date:</span>
+              <span
+                id="displayDate"
+                class="dotted-underline text-center min-w-[100px]"
+              >
                 29/05/2023
               </span>
             </div>
-          </div>
-          <div class="text-sm text-gray-700">
-            निरीक्षक, सुरक्षा दल / Inspector of Protection Force / S&T Workshop
-            PTJ
+            <div class="flex items-center justify-end">
+              <span class="text-sm mr-2 text-gray-700"
+                >क्रमांक / Serial No.:</span
+              >
+              <span
+                id="displaySerialNo"
+                class="dotted-underline text-center min-w-[100px]"
+              >
+                <!-- Serial number -->
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- Ticket Number and Name -->
-        <div class="mb-6">
-          <div class="flex flex-wrap items-center mb-2">
-            <span class="text-sm mr-4 text-gray-700">टिकट सं.</span>
+        <!-- Ticket Number, Name, and Purpose Section (Hindi/Mixed) -->
+        <div class="mb-6 text-sm text-gray-700">
+          <div class="flex items-center mb-2">
+            <span class="w-20 inline-block">टिकट सं. / T.No:</span>
             <span
               id="displayTicketNo"
-              class="dotted-underline text-center mr-4"
+              class="dotted-underline font-semibold text-gray-800 text-center flex-1"
             >
               4
             </span>
-            <span class="text-sm mr-4 text-gray-700">नाम</span>
-            <span id="displayName" class="dotted-underline text-center mr-2">
+            <span class="w-16 inline-block ml-4">नाम / Name:</span>
+            <span
+              id="displayName"
+              class="dotted-underline font-semibold text-gray-800 text-center flex-1"
+            >
               Joseph
             </span>
-            <span class="text-sm text-gray-700">को</span>
+            <span class="ml-2">को</span>
           </div>
-          <div class="text-sm text-gray-700">
-            जिसने
-            <span id="displayPurpose" class="dotted-underline"
-              >delivering the product</span
+          <div>
+            जिसने / who
+            <span
+              id="displayPurpose"
+              class="dotted-underline font-semibold text-gray-800 mx-1"
             >
-            स्टाक बजार मुकाम छोड़ा, शाप से बाहर जाने दें ।
+              delivering the product
+            </span>
+            हेतु कार्य छोड़ा, शॉप से बाहर जाने दें।
           </div>
         </div>
 
-        <!-- English Section -->
-        <div class="mb-6">
+        <!-- English Details Section -->
+        <div class="mb-8 text-sm text-gray-700">
           <div class="flex items-center mb-2">
-            <span class="text-sm mr-4 text-gray-700"
-              >Please pass of T. No.</span
-            >
+            <span class="w-32 inline-block">Please pass T. No.:</span>
             <span
               id="displayTicketNo2"
-              class="dotted-underline flex-1 text-center"
+              class="dotted-underline font-semibold text-gray-800 text-center flex-1"
             >
               4
             </span>
           </div>
           <div class="flex items-center mb-2">
-            <span class="text-sm mr-4 text-gray-700">Name</span>
-            <span id="displayName2" class="dotted-underline flex-1 text-center">
+            <span class="w-32 inline-block">Name:</span>
+            <span
+              id="displayName2"
+              class="dotted-underline font-semibold text-gray-800 text-center flex-1"
+            >
               Joseph
             </span>
           </div>
-          <div class="flex flex-wrap items-center mb-2">
-            <span class="text-sm mr-4 text-gray-700">who left work at</span>
+          <div class="flex items-center">
+            <span class="w-32 inline-block">who left work at:</span>
             <span
               id="displayTimeOut"
-              class="dotted-underline min-w-[100px] text-center mr-4"
+              class="dotted-underline font-semibold text-gray-800 text-center w-20"
             >
               10:10
             </span>
-            <span class="text-sm text-gray-700">hours.</span>
+            <span class="ml-2">hours.</span>
           </div>
         </div>
 
         <!-- Signature Section -->
-        <div class="flex justify-end mb-8 mt-12">
-          <div class="text-center w-[220px]">
+        <div class="flex justify-end mb-8 mt-16">
+          <div class="text-center w-[250px]">
             <div
               id="signatureContainer"
-              class="my-2 min-h-[100px] border border-gray-300 p-2 flex flex-col items-center justify-center"
-            ></div>
-            <div class="text-sm font-bold mt-2 text-gray-700">
+              class="mb-1 min-h-[60px] border-b border-gray-400 flex items-center justify-center"
+            >
+              <!-- Signature image will be placed here -->
+            </div>
+            <div class="text-sm font-semibold text-gray-800">
               एस. एस. ई. / S.S.E
             </div>
           </div>
         </div>
 
         <!-- Acknowledgement Section -->
-        <div class="mt-12 border-t border-gray-300 pt-4">
-          <div class="text-sm font-bold mb-4 text-gray-700">
+        <div
+          class="mt-16 border-t-2 border-gray-400 pt-4 text-sm text-gray-700 relative"
+        >
+          <!-- Added Serial No. to the top right -->
+          <div class="absolute top-6 right-4 flex items-center">
+            <span class="text-sm mr-2 text-gray-700"
+              >क्रमांक / Serial No.:</span
+            >
+            <span
+              id="displaySerialNoAck"
+              class="dotted-underline font-semibold text-gray-800 text-center min-w-[100px]"
+            >
+              <!-- Serial No value -->
+            </span>
+          </div>
+          <div class="font-semibold mb-3 text-gray-800">
             प्राप्ति सूचना / Acknowledgement
           </div>
-          <div class="text-sm mb-6 text-gray-700">
-            I <span id="displayName3" class="dotted-underline">Joseph</span> -
-            T.No
+          <div class="mb-6 pr-40">
+            <!-- Added padding-right to avoid overlap -->
+            I
+            <span
+              id="displayName3"
+              class="dotted-underline font-semibold text-gray-800"
+              >Joseph</span
+            >, T.No
             <span
               id="displayTicketNo3"
-              class="dotted-underline min-w-[60px] text-center"
+              class="dotted-underline font-semibold text-gray-800 w-16 inline-block text-center"
               >4</span
+            >, received gate pass and left work at
+            <span
+              id="displayTimeOut2"
+              class="dotted-underline font-semibold text-gray-800 w-20 inline-block text-center"
+              >10:10</span
             >
-            received gate pass and left work at
-            <span id="displayTimeOut2" class="dotted-underline">10:10</span>
             hours.
           </div>
           <div class="flex justify-end mt-10">
-            <div class="text-sm text-gray-700">
-              Staff signature:
-              <span
-                class="dotted-underline min-w-[180px] inline-block ml-2"
-              ></span>
+            <div class="w-[250px] text-center">
+              <div class="border-b border-gray-400 h-8 mb-1"></div>
+              <!-- Placeholder for signature line -->
+              <span class="font-semibold text-gray-800">Staff Signature</span>
             </div>
           </div>
         </div>
-
-        <!-- Footer -->
         <div
-          class="mt-8 text-center text-xs text-gray-500 border-t border-gray-300 pt-4"
+          class="mt-12 text-center text-xs text-gray-500 border-t border-gray-400 pt-3"
         >
-          <div>This is an official document of Southern Railway</div>
-          <div>Generated on: 29 May 2023 | Gate Pass System v2.1</div>
+          <div>Southern Railway Official Document</div>
+          <div>
+            Gate Pass System v2.1 | Generated: <span id="generationDate"></span>
+          </div>
         </div>
       </div>
 
@@ -470,10 +529,13 @@
         date: document.getElementById("date"),
         timeOut: document.getElementById("timeOut"),
         purpose: document.getElementById("purpose"),
+        serialNo: document.getElementById("serialNo"), // Added
       };
 
       const displayElements = {
         date: document.getElementById("displayDate"),
+        serialNo: document.getElementById("displaySerialNo"), // Added
+        serialNoAck: document.getElementById("displaySerialNoAck"), // Added for acknowledgement
         ticketNo: document.getElementById("displayTicketNo"),
         ticketNo2: document.getElementById("displayTicketNo2"),
         ticketNo3: document.getElementById("displayTicketNo3"),
@@ -483,6 +545,7 @@
         timeOut: document.getElementById("displayTimeOut"),
         timeOut2: document.getElementById("displayTimeOut2"),
         purpose: document.getElementById("displayPurpose"),
+        generationDate: document.getElementById("generationDate"), // Added for footer
       };
 
       const buttons = {
@@ -509,6 +572,8 @@
       // Update display elements based on form inputs
       function updateGatepassDisplay() {
         displayElements.date.textContent = formatDate(formInputs.date.value);
+        displayElements.serialNo.textContent = formInputs.serialNo.value; // Added
+        displayElements.serialNoAck.textContent = formInputs.serialNo.value; // Added for acknowledgement
         displayElements.ticketNo.textContent = formInputs.ticketNo.value;
         displayElements.ticketNo2.textContent = formInputs.ticketNo.value;
         displayElements.ticketNo3.textContent = formInputs.ticketNo.value;
@@ -518,6 +583,14 @@
         displayElements.timeOut.textContent = formInputs.timeOut.value;
         displayElements.timeOut2.textContent = formInputs.timeOut.value;
         displayElements.purpose.textContent = formInputs.purpose.value;
+        // Update footer generation date
+        const now = new Date();
+        displayElements.generationDate.textContent = `${now.toLocaleDateString(
+          "en-GB"
+        )} ${now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
       }
 
       // Initialize display
@@ -580,15 +653,15 @@
           // Display the signature
           signatureContainer.innerHTML = `
                     <div class="flex flex-col items-center">
-                        <img src="${signatureImage}" 
-                             alt="Digital Signature" 
+                        <img src="${signatureImage}"
+                             alt="Digital Signature"
                              class="h-[40px] w-[180px] object-contain">
                         <p class="text-xs mt-1">Signed by: ${formInputs.name.value}</p>
                         <p class="text-xs">Date: ${signedDate}</p>
                         <p class="text-xs text-green-600 font-bold mt-1">Class 3 Digital Signature Verified</p>
                     </div>
                 `;
-        }, 3000); // Simulate 3-second delay for device connection
+        }, 3000);
       });
 
       // Cancel device connection
@@ -623,34 +696,32 @@
         const input = document.getElementById("printableArea");
 
         html2canvas(input, {
-          scale: 2,
+          scale: 3, // Increased scale for better quality
           useCORS: true,
           logging: false,
-          backgroundColor: "#FFFFFF",
+          backgroundColor: "#FFFFFF", // Ensure background is white
+          windowWidth: input.scrollWidth, // Try to capture full width
+          windowHeight: input.scrollHeight, // Try to capture full height
         })
           .then((canvas) => {
-            const imgData = canvas.toDataURL("image/png");
+            const imgData = canvas.toDataURL("image/png", 1.0); // Use highest quality PNG
             const pdf = new jsPDF({
               orientation: "portrait",
               unit: "mm",
               format: "a4",
             });
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-            const imgX = (pdfWidth - imgWidth * ratio) / 2;
-            const imgY = 0;
+            const pdfWidth = pdf.internal.pageSize.getWidth(); // A4 width in mm
+            const pdfHeight = pdf.internal.pageSize.getHeight(); // A4 height in mm
 
+            // Add the image to the PDF, stretching it to fill the A4 page
             pdf.addImage(
               imgData,
               "PNG",
-              imgX,
-              imgY,
-              imgWidth * ratio,
-              imgHeight * ratio
+              0, // Start at top-left corner (x=0)
+              0, // Start at top-left corner (y=0)
+              pdfWidth, // Force width to A4 width
+              pdfHeight // Force height to A4 height
             );
             pdf.save(`gatepass-${formInputs.ticketNo.value || "details"}.pdf`);
 
