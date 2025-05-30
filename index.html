@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gate Pass Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1e40af",
+              secondary: "#3b82f6",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+
+        .printable-area {
+          width: 210mm !important;
+          min-height: 297mm !important;
+          height: auto;
+          margin: 0 auto !important;
+          padding: 15mm !important;
+          box-sizing: border-box !important;
+          box-shadow: none !important;
+          border: 1px solid black !important;
+          font-size: 10pt;
+        }
+
+        body,
+        html {
+          margin: 0 !important;
+          padding: 0 !important;
+          background-color: white !important;
+        }
+
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+        .printable-area * {
+          color: black !important;
+        }
+        .border-dotted {
+          border-style: dotted !important;
+          border-color: black !important;
+        }
+        .border {
+          border-color: black !important;
+        }
+        img {
+          display: block !important;
+          max-width: 100% !important;
+        }
+      }
+
+      .dotted-underline {
+        border-bottom: 2px dotted #000;
+        display: inline-block;
+        min-width: 120px;
+        padding-bottom: 2px;
+      }
+
+      .signature-placeholder {
+        background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+          linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+          linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      }
+
+      .device-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        color: white;
+      }
+
+      .device {
+        width: 200px;
+        height: 120px;
+        background: #2d3748;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        margin-bottom: 30px;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      }
+
+      .device-screen {
+        width: 180px;
+        height: 80px;
+        background: #1a202c;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: #3b82f6;
+        font-size: 14px;
+        text-align: center;
+        padding: 10px;
+      }
+
+      .device::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        width: 60px;
+        height: 10px;
+        background: #4a5568;
+        border-radius: 5px 5px 0 0;
+      }
+
+      .signature-animation {
+        width: 100%;
+        height: 3px;
+        background: #3b82f6;
+        position: absolute;
+        bottom: 20px;
+        animation: scan 2s infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-30px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: #1e40af;
+        color: white;
+        border: 1px solid #1e3a8a;
+      }
+
+      .btn-primary:hover {
+        background: #1e3a8a;
+      }
+
+      .btn-outline {
+        background: white;
+        color: #1e40af;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-outline:hover {
+        background: #f3f4f6;
+        border-color: #9ca3af;
+      }
+
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+
+      .railway-header {
+        background: #1e40af;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-primary mb-2">
+          Gate Pass Generator
+        </h1>
+        <p class="text-gray-600">Railway Workshop Gate Pass System</p>
+      </div>
+
+      <!-- Form Section -->
+      <div class="card mb-8 no-print">
+        <div class="railway-header">
+          <h2 class="text-xl font-bold">Edit Gate Pass Details</h2>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="ticketNo" class="block text-sm font-medium mb-1"
+                >Ticket No.</label
+              >
+              <input id="ticketNo" type="text" class="input-field" value="4" />
+            </div>
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1"
+                >Name</label
+              >
+              <input id="name" type="text" class="input-field" value="Joseph" />
+            </div>
+            <div>
+              <label for="date" class="block text-sm font-medium mb-1"
+                >Date</label
+              >
+              <input
+                id="date"
+                type="date"
+                class="input-field"
+                value="2023-05-29"
+              />
+            </div>
+            <div>
+              <label for="timeOut" class="block text-sm font-medium mb-1"
+                >Time Out</label
+              >
+              <input
+                id="timeOut"
+                type="time"
+                class="input-field"
+                value="10:10"
+              />
+            </div>
+            <div class="md:col-span-2">
+              <label for="purpose" class="block text-sm font-medium mb-1"
+                >Purpose</label
+              >
+              <input
+                id="purpose"
+                type="text"
+                class="input-field"
+                value="delivering the product"
+              />
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3 mt-6 justify-center">
+            <button id="fetchSignature" class="btn btn-outline">
+              <i data-lucide="fingerprint" class="w-4 h-4 mr-2"></i>
+              Fetch Digital Signature
+            </button>
+            <button id="printBtn" class="btn btn-outline">
+              <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
+              Print
+            </button>
+            <button id="downloadBtn" class="btn btn-primary">
+              <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gate Pass Document -->
+      <div
+        id="printableArea"
+        class="printable-area bg-white border-2 border-gray-800 p-8 font-serif"
+      >
+        <!-- Header -->
+        <div
+          class="flex justify-between items-center mb-6 border-b border-gray-300 pb-2"
+        >
+          <div class="text-sm font-bold text-gray-700">
+            दक्षिण रेलवे / SOUTHERN RAILWAY
+          </div>
+          <div class="text-sm font-bold text-gray-700">एल. एम. / L.M. 74</div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-8">
+          <h1 class="text-base font-bold text-gray-800">
+            कामगारों के लिए कारखाना के गेट-पास / WORKSHOP GATE PASS FOR WORKMEN
+          </h1>
+        </div>
+
+        <!-- To and Date Section -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <div class="text-sm text-gray-700">सेवा में / To</div>
+            <div class="flex items-center">
+              <span class="text-sm mr-4 text-gray-700">दिनांक / Date</span>
+              <span id="displayDate" class="dotted-underline text-center">
+                29/05/2023
+              </span>
+            </div>
+          </div>
+          <div class="text-sm text-gray-700">
+            निरीक्षक, सुरक्षा दल / Inspector of Protection Force / S&T Workshop
+            PTJ
+          </div>
+        </div>
+
+        <!-- Ticket Number and Name -->
+        <div class="mb-6">
+          <div class="flex flex-wrap items-center mb-2">
+            <span class="text-sm mr-4 text-gray-700">टिकट सं.</span>
+            <span
+              id="displayTicketNo"
+              class="dotted-underline text-center mr-4"
+            >
+              4
+            </span>
+            <span class="text-sm mr-4 text-gray-700">नाम</span>
+            <span id="displayName" class="dotted-underline text-center mr-2">
+              Joseph
+            </span>
+            <span class="text-sm text-gray-700">को</span>
+          </div>
+          <div class="text-sm text-gray-700">
+            जिसने
+            <span id="displayPurpose" class="dotted-underline"
+              >delivering the product</span
+            >
+            स्टाक बजार मुकाम छोड़ा, शाप से बाहर जाने दें ।
+          </div>
+        </div>
+
+        <!-- English Section -->
+        <div class="mb-6">
+          <div class="flex items-center mb-2">
+            <span class="text-sm mr-4 text-gray-700"
+              >Please pass of T. No.</span
+            >
+            <span
+              id="displayTicketNo2"
+              class="dotted-underline flex-1 text-center"
+            >
+              4
+            </span>
+          </div>
+          <div class="flex items-center mb-2">
+            <span class="text-sm mr-4 text-gray-700">Name</span>
+            <span id="displayName2" class="dotted-underline flex-1 text-center">
+              Joseph
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center mb-2">
+            <span class="text-sm mr-4 text-gray-700">who left work at</span>
+            <span
+              id="displayTimeOut"
+              class="dotted-underline min-w-[100px] text-center mr-4"
+            >
+              10:10
+            </span>
+            <span class="text-sm text-gray-700">hours.</span>
+          </div>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="flex justify-end mb-8 mt-12">
+          <div class="text-center w-[220px]">
+            <div
+              id="signatureContainer"
+              class="my-2 min-h-[100px] border border-gray-300 p-2 flex flex-col items-center justify-center"
+            ></div>
+            <div class="text-sm font-bold mt-2 text-gray-700">
+              एस. एस. ई. / S.S.E
+            </div>
+          </div>
+        </div>
+
+        <!-- Acknowledgement Section -->
+        <div class="mt-12 border-t border-gray-300 pt-4">
+          <div class="text-sm font-bold mb-4 text-gray-700">
+            प्राप्ति सूचना / Acknowledgement
+          </div>
+          <div class="text-sm mb-6 text-gray-700">
+            I <span id="displayName3" class="dotted-underline">Joseph</span> -
+            T.No
+            <span
+              id="displayTicketNo3"
+              class="dotted-underline min-w-[60px] text-center"
+              >4</span
+            >
+            received gate pass and left work at
+            <span id="displayTimeOut2" class="dotted-underline">10:10</span>
+            hours.
+          </div>
+          <div class="flex justify-end mt-10">
+            <div class="text-sm text-gray-700">
+              Staff signature:
+              <span
+                class="dotted-underline min-w-[180px] inline-block ml-2"
+              ></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="mt-8 text-center text-xs text-gray-500 border-t border-gray-300 pt-4"
+        >
+          <div>This is an official document of Southern Railway</div>
+          <div>Generated on: 29 May 2023 | Gate Pass System v2.1</div>
+        </div>
+      </div>
+
+      <!-- Device Connection Animation -->
+      <div id="deviceAnimation" class="device-animation hidden">
+        <div class="device">
+          <div class="device-screen">
+            <div>Digital Signature Device</div>
+            <div class="text-xs mt-2">Connected to Gate Pass System</div>
+            <div class="signature-animation"></div>
+          </div>
+        </div>
+        <h2 class="text-xl font-bold mb-4">Fetching Digital Signature</h2>
+        <p class="text-gray-300 mb-6 text-center max-w-md">
+          Please authenticate using your digital signature device. This may take
+          a few moments...
+        </p>
+        <button id="cancelDevice" class="btn btn-outline bg-white">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // DOM elements
+      const formInputs = {
+        ticketNo: document.getElementById("ticketNo"),
+        name: document.getElementById("name"),
+        date: document.getElementById("date"),
+        timeOut: document.getElementById("timeOut"),
+        purpose: document.getElementById("purpose"),
+      };
+
+      const displayElements = {
+        date: document.getElementById("displayDate"),
+        ticketNo: document.getElementById("displayTicketNo"),
+        ticketNo2: document.getElementById("displayTicketNo2"),
+        ticketNo3: document.getElementById("displayTicketNo3"),
+        name: document.getElementById("displayName"),
+        name2: document.getElementById("displayName2"),
+        name3: document.getElementById("displayName3"),
+        timeOut: document.getElementById("displayTimeOut"),
+        timeOut2: document.getElementById("displayTimeOut2"),
+        purpose: document.getElementById("displayPurpose"),
+      };
+
+      const buttons = {
+        fetchSignature: document.getElementById("fetchSignature"),
+        print: document.getElementById("printBtn"),
+        download: document.getElementById("downloadBtn"),
+        cancelDevice: document.getElementById("cancelDevice"),
+      };
+
+      const signatureContainer = document.getElementById("signatureContainer");
+      const deviceAnimation = document.getElementById("deviceAnimation");
+
+      // Format date as dd/mm/yyyy
+      function formatDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+      }
+
+      // Update display elements based on form inputs
+      function updateGatepassDisplay() {
+        displayElements.date.textContent = formatDate(formInputs.date.value);
+        displayElements.ticketNo.textContent = formInputs.ticketNo.value;
+        displayElements.ticketNo2.textContent = formInputs.ticketNo.value;
+        displayElements.ticketNo3.textContent = formInputs.ticketNo.value;
+        displayElements.name.textContent = formInputs.name.value;
+        displayElements.name2.textContent = formInputs.name.value;
+        displayElements.name3.textContent = formInputs.name.value;
+        displayElements.timeOut.textContent = formInputs.timeOut.value;
+        displayElements.timeOut2.textContent = formInputs.timeOut.value;
+        displayElements.purpose.textContent = formInputs.purpose.value;
+      }
+
+      // Initialize display
+      updateGatepassDisplay();
+
+      // Add event listeners to form inputs
+      Object.values(formInputs).forEach((input) => {
+        input.addEventListener("input", updateGatepassDisplay);
+      });
+
+      // Fetch signature handler with device simulation
+      buttons.fetchSignature.addEventListener("click", () => {
+        if (!formInputs.name.value) {
+          alert("Please enter a name before fetching the signature.");
+          return;
+        }
+
+        // Show device animation
+        deviceAnimation.classList.remove("hidden");
+
+        // Simulate device connection and signature fetch
+        setTimeout(() => {
+          const signedDate = new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          // Generate a digital signature representation
+          const canvas = document.createElement("canvas");
+          canvas.width = 200;
+          canvas.height = 50;
+          const ctx = canvas.getContext("2d");
+
+          // Clear canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw signature
+          ctx.font = 'italic 18px "Brush Script MT", cursive';
+          ctx.fillStyle = "#1e40af";
+          ctx.fillText("Digitally Signed by " + formInputs.name.value, 10, 30);
+
+          // Draw verification badge
+          ctx.beginPath();
+          ctx.arc(180, 25, 12, 0, Math.PI * 2);
+          ctx.fillStyle = "#10b981";
+          ctx.fill();
+
+          ctx.font = "bold 16px Arial";
+          ctx.fillStyle = "white";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("✓", 180, 25);
+
+          const signatureImage = canvas.toDataURL();
+
+          // Hide device animation
+          deviceAnimation.classList.add("hidden");
+
+          // Display the signature
+          signatureContainer.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <img src="${signatureImage}" 
+                             alt="Digital Signature" 
+                             class="h-[40px] w-[180px] object-contain">
+                        <p class="text-xs mt-1">Signed by: ${formInputs.name.value}</p>
+                        <p class="text-xs">Date: ${signedDate}</p>
+                        <p class="text-xs text-green-600 font-bold mt-1">Class 3 Digital Signature Verified</p>
+                    </div>
+                `;
+        }, 3000); // Simulate 3-second delay for device connection
+      });
+
+      // Cancel device connection
+      buttons.cancelDevice.addEventListener("click", () => {
+        deviceAnimation.classList.add("hidden");
+      });
+
+      // Print handler
+      buttons.print.addEventListener("click", () => {
+        window.print();
+      });
+
+      // Download PDF handler
+      buttons.download.addEventListener("click", () => {
+        // Show loading indicator
+        const originalText = buttons.download.innerHTML;
+        buttons.download.innerHTML =
+          '<i data-lucide="loader" class="animate-spin w-4 h-4 mr-2"></i> Generating PDF...';
+        buttons.download.disabled = true;
+        lucide.createIcons();
+
+        // Load the jsPDF library dynamically if needed
+        if (typeof window.jspdf !== "object") {
+          alert("PDF library is still loading. Please try again in a moment.");
+          buttons.download.innerHTML = originalText;
+          buttons.download.disabled = false;
+          lucide.createIcons();
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const input = document.getElementById("printableArea");
+
+        html2canvas(input, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: "#FFFFFF",
+        })
+          .then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+              orientation: "portrait",
+              unit: "mm",
+              format: "a4",
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = (pdfWidth - imgWidth * ratio) / 2;
+            const imgY = 0;
+
+            pdf.addImage(
+              imgData,
+              "PNG",
+              imgX,
+              imgY,
+              imgWidth * ratio,
+              imgHeight * ratio
+            );
+            pdf.save(`gatepass-${formInputs.ticketNo.value || "details"}.pdf`);
+
+            // Restore button
+            buttons.download.innerHTML = originalText;
+            buttons.download.disabled = false;
+            lucide.createIcons();
+          })
+          .catch((err) => {
+            console.error("Error generating PDF:", err);
+            alert("Error generating PDF. Check console for details.");
+
+            // Restore button
+            buttons.download.innerHTML = originalText;
+            buttons.download.disabled = false;
+            lucide.createIcons();
+          });
+      });
+
+      // Format date input to show current date by default
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0];
+      formInputs.date.value = formattedDate;
+      updateGatepassDisplay();
+    </script>
+  </body>
+</html>
