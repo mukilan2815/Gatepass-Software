@@ -601,68 +601,68 @@
         input.addEventListener("input", updateGatepassDisplay);
       });
 
-      // Fetch signature handler with device simulation
-      buttons.fetchSignature.addEventListener("click", () => {
-        if (!formInputs.name.value) {
-          alert("Please enter a name before fetching the signature.");
-          return;
-        }
+      // // Fetch signature handler with device simulation
+      // buttons.fetchSignature.addEventListener("click", () => {
+      //   if (!formInputs.name.value) {
+      //     alert("Please enter a name before fetching the signature.");
+      //     return;
+      //   }
 
-        // Show device animation
-        deviceAnimation.classList.remove("hidden");
+      //   // Show device animation
+      //   deviceAnimation.classList.remove("hidden");
 
-        // Simulate device connection and signature fetch
-        setTimeout(() => {
-          const signedDate = new Date().toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
+      //   // Simulate device connection and signature fetch
+      //   setTimeout(() => {
+      //     const signedDate = new Date().toLocaleDateString("en-US", {
+      //       year: "numeric",
+      //       month: "long",
+      //       day: "numeric",
+      //     });
 
-          // Generate a digital signature representation
-          const canvas = document.createElement("canvas");
-          canvas.width = 200;
-          canvas.height = 50;
-          const ctx = canvas.getContext("2d");
+      //     // Generate a digital signature representation
+      //     const canvas = document.createElement("canvas");
+      //     canvas.width = 200;
+      //     canvas.height = 50;
+      //     const ctx = canvas.getContext("2d");
 
-          // Clear canvas
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+      //     // Clear canvas
+      //     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Draw signature
-          ctx.font = 'italic 18px "Brush Script MT", cursive';
-          ctx.fillStyle = "#1e40af";
-          ctx.fillText("Digitally Signed by " + formInputs.name.value, 10, 30);
+      //     // Draw signature
+      //     ctx.font = 'italic 18px "Brush Script MT", cursive';
+      //     ctx.fillStyle = "#1e40af";
+      //     ctx.fillText("Digitally Signed by " + formInputs.name.value, 10, 30);
 
-          // Draw verification badge
-          ctx.beginPath();
-          ctx.arc(180, 25, 12, 0, Math.PI * 2);
-          ctx.fillStyle = "#10b981";
-          ctx.fill();
+      //     // Draw verification badge
+      //     ctx.beginPath();
+      //     ctx.arc(180, 25, 12, 0, Math.PI * 2);
+      //     ctx.fillStyle = "#10b981";
+      //     ctx.fill();
 
-          ctx.font = "bold 16px Arial";
-          ctx.fillStyle = "white";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("✓", 180, 25);
+      //     ctx.font = "bold 16px Arial";
+      //     ctx.fillStyle = "white";
+      //     ctx.textAlign = "center";
+      //     ctx.textBaseline = "middle";
+      //     ctx.fillText("✓", 180, 25);
 
-          const signatureImage = canvas.toDataURL();
+      //     const signatureImage = canvas.toDataURL();
 
-          // Hide device animation
-          deviceAnimation.classList.add("hidden");
+      //     // Hide device animation
+      //     deviceAnimation.classList.add("hidden");
 
-          // Display the signature
-          signatureContainer.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <img src="${signatureImage}"
-                             alt="Digital Signature"
-                             class="h-[40px] w-[180px] object-contain">
-                        <p class="text-xs mt-1">Signed by: ${formInputs.name.value}</p>
-                        <p class="text-xs">Date: ${signedDate}</p>
-                        <p class="text-xs text-green-600 font-bold mt-1">Class 3 Digital Signature Verified</p>
-                    </div>
-                `;
-        }, 3000);
-      });
+      //     // Display the signature
+      //     signatureContainer.innerHTML = `
+      //               <div class="flex flex-col items-center">
+      //                   <img src="${signatureImage}"
+      //                        alt="Digital Signature"
+      //                        class="h-[40px] w-[180px] object-contain">
+      //                   <p class="text-xs mt-1">Signed by: ${formInputs.name.value}</p>
+      //                   <p class="text-xs">Date: ${signedDate}</p>
+      //                   <p class="text-xs text-green-600 font-bold mt-1">Class 3 Digital Signature Verified</p>
+      //               </div>
+      //           `;
+      //   }, 3000);
+      // });
 
       // Cancel device connection
       buttons.cancelDevice.addEventListener("click", () => {
