@@ -69,10 +69,8 @@
       }
 
       .dotted-underline {
-        border-bottom: 2px dotted #000;
-        display: inline-block;
-        min-width: 120px;
-        padding-bottom: 2px;
+        border-bottom: 1px dotted #000;
+        padding: 0 0.25rem; /* small breathing room on both sides */
       }
 
       .signature-placeholder {
@@ -110,6 +108,15 @@
         position: relative;
         margin-bottom: 30px;
         box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      }
+      #printableArea {
+        background: #ffffff !important;
+        color: #000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-smoothing: antialiased;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       .device-screen {
@@ -230,7 +237,7 @@
       .approval-container {
         display: flex;
         justify-content: flex-end;
-        margin-top: 1rem;
+        margin-top: 3rem;
       }
 
       .approval-section {
@@ -330,16 +337,43 @@
                 placeholder="Approving authority"
               />
             </div>
-            <div class="md:col-span-2">
-              <label for="purpose" class="block text-sm font-medium mb-1"
-                >Purpose</label
-              >
-              <input
-                id="purpose"
-                type="text"
-                class="input-field"
-                value="delivering the product"
-              />
+            <!-- Modified section: Added section dropdown next to purpose -->
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="purpose" class="block text-sm font-medium mb-1"
+                  >उद्देश्य/Purpose</label
+                >
+                <input
+                  id="purpose"
+                  type="text"
+                  class="input-field"
+                  value="delivering the product"
+                />
+              </div>
+              <div>
+                <label for="formSection" class="block text-sm font-medium mb-1"
+                  >Section</label
+                >
+                <select id="formSection" class="input-field">
+                  <option value="">Select Section</option>
+                  <option value="ESED">ESED</option>
+                  <option value="BIS">BIS</option>
+                  <option value="RS">RS</option>
+                  <option value="EMA-I">EMA-I</option>
+                  <option value="EMA-II">EMA-II</option>
+                  <option value="FS">FS</option>
+                  <option value="FAB">FAB</option>
+                  <option value="MS">MS</option>
+                  <option value="TR">TR</option>
+                  <option value="ELAB">ELAB</option>
+                  <option value="EMW">EMW</option>
+                  <option value="MMW">MMW</option>
+                  <option value="PC">PC</option>
+                  <option value="PCO/INS">PCO/INS</option>
+                  <option value="PCO/PROGRESS">PCO/PROGRESS</option>
+                  <option value="CMT LAB">CMT LAB</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="flex flex-wrap gap-3 mt-6 justify-center">
@@ -359,20 +393,19 @@
         id="printableArea"
         class="printable-area bg-white border border-black p-8 font-serif"
       >
-        <div
-          class="mb-2 flex justify-center items-center text-2xl font-bold text-left"
-        >
-          S&amp;T Workshop PTJ
-        </div>
-        <div
-          class="flex justify-center items-center mb-6 border-b border-gray-400 pb-3"
-        >
+        <img src="logorailways.png" alt="" class="w-16 ml-[47%] pb-3 h-20" />
+        <div class="flex justify-center items-center mb-4">
           <div class="text-base font-semibold text-gray-800">
             दक्षिण रेलवे / SOUTHERN RAILWAY
           </div>
         </div>
-
-        <div class="text-center mb-8">
+        <div
+          class="mb-2 flex justify-center items-center text-xl font-bold text-left"
+        >
+          S&amp;T Workshop Podanur
+        </div>
+        <hr />
+        <div class="text-center mb-8 mt-2">
           <h1 class="text-base font-bold text-gray-800">
             कामगारों के लिए कारखाना के गेट-पास / WORKSHOP GATE PASS FOR WORKMEN
           </h1>
@@ -402,6 +435,14 @@
                 class="dotted-underline text-center min-w-[100px]"
               >
               </span>
+            </div>
+            <!-- Modified: Replaced dropdown with display field -->
+            <div class="flex items-center justify-end mt-2">
+              <span class="text-sm mr-2 text-gray-700">Section:</span>
+              <span
+                id="displaySection"
+                class="dotted-underline text-center min-w-[100px]"
+              ></span>
             </div>
           </div>
         </div>
@@ -446,17 +487,14 @@
             </div>
           </div>
           <div class="mt-4">
-            Purpose of the outpass is to:
-            <span
-              id="displayPurpose"
-              class="dotted-underline font-semibold text-gray-800 mx-1"
-            >
+            उद्देश्य/Purpose :
+            <span id="displayPurpose" class="font-semibold text-gray-800 mx-1">
               delivering the product
             </span>
           </div>
         </div>
 
-        <div class="approval-container">
+        <div class="approval-container mt-10">
           <div class="approval-section">
             <div class="text-center w-full">
               <div class="signature-line"></div>
@@ -474,47 +512,54 @@
             <div class="font-semibold text-gray-800 text-lg mb-2">
               प्राप्ति सूचना / Acknowledgement
             </div>
-            <div class="flex justify-center items-center">
-              <span class="text-sm mr-2 text-gray-700"
-                >क्रमांक / Serial No.:</span
-              >
+          </div>
+          <div class="flex justify-start mb-5 items-start">
+            <span class="text-sm mr-2 text-gray-700"
+              >क्रमांक / Serial No.:</span
+            >
+            <span
+              id="displaySerialNoAck"
+              class="dotted-underline font-semibold text-gray-800 text-center min-w-[100px]"
+            >
+            </span>
+          </div>
+          <div class="mb-6 space-y-10 text-center leading-relaxed mx-auto">
+            <!-- main sentence inside parentheses -->
+            <p class="text-justify">
+              I
               <span
-                id="displaySerialNoAck"
-                class="dotted-underline font-semibold text-gray-800 text-center min-w-[100px]"
+                id="displayName3"
+                class="dotted-underline font-semibold inline-block min-w-[7rem] text-center"
+              >
+                Joseph </span
+              >, T.No
+              <span
+                id="displayTicketNo3"
+                class="dotted-underline font-semibold inline-block w-16 text-center"
+              >
+                4
+              </span>
+              received gate pass for
+              <span
+                id="displayPurposeAck"
+                class="dotted-underline font-semibold inline-block min-w-[10rem]"
+              >
+                delivering&nbsp;the&nbsp;product
+              </span>
+              and left work at
+              <span
+                id="displayTimeOut2"
+                class="dotted-underline font-semibold inline-block w-20 text-center"
+              >
+                10:10
+              </span>
+              hours and shall return&nbsp;by
+              <span
+                id="displayTimeIn2"
+                class="dotted-underline font-semibold inline-block w-20 text-center"
               >
               </span>
-            </div>
-          </div>
-
-          <div class="mb-6 text-center px-8">
-            I
-            <span
-              id="displayName3"
-              class="dotted-underline font-semibold text-gray-800"
-              >Joseph</span
-            >, T.No
-            <span
-              id="displayTicketNo3"
-              class="dotted-underline font-semibold text-gray-800 w-16 inline-block text-center"
-              >4</span
-            >, received gate pass for
-            <span
-              id="displayPurposeAck"
-              class="dotted-underline font-semibold text-gray-800"
-              >delivering the product</span
-            >
-            and left work at
-            <span
-              id="displayTimeOut2"
-              class="dotted-underline mt-6 font-semibold text-gray-800 w-20 inline-block text-center"
-              >10:10</span
-            >
-            hours and should return by
-            <span
-              id="displayTimeIn2"
-              class="dotted-underline mt-6 font-semibold text-gray-800 w-20 inline-block text-center"
-            ></span>
-            hours.
+            </p>
           </div>
 
           <div class="flex justify-between mt-10">
@@ -522,7 +567,7 @@
               <div class="text-center w-full">
                 <span id="displayApprovedBy" class="font-normal"></span>
 
-                <div class="signature-line"></div>
+                <div class="signature-line mt-2"></div>
                 <div class="text-sm font-semibold text-gray-800">
                   Approved By
                 </div>
@@ -569,6 +614,7 @@
         purpose: document.getElementById("purpose"),
         serialNo: document.getElementById("serialNo"),
         approvedBy: document.getElementById("approvedBy"),
+        section: document.getElementById("formSection"), // Added section input
       };
 
       // Display elements
@@ -587,6 +633,7 @@
         purpose: document.getElementById("displayPurpose"),
         purposeAck: document.getElementById("displayPurposeAck"),
         approvedBy: document.getElementById("displayApprovedBy"),
+        section: document.getElementById("displaySection"), // Added section display
       };
 
       // Buttons
@@ -652,6 +699,8 @@
           formInputs.purpose.value || "______";
         displayElements.approvedBy.textContent =
           formInputs.approvedBy.value || "__________";
+        displayElements.section.textContent =
+          formInputs.section.value || "______"; // Added section display
       }
 
       // Initialize the display with current values
@@ -669,58 +718,90 @@
       });
 
       // PDF download button functionality
-      buttons.download.addEventListener("click", () => {
+      buttons.download.addEventListener("click", async () => {
         const originalText = buttons.download.innerHTML;
         buttons.download.innerHTML =
           '<i data-lucide="loader" class="animate-spin w-4 h-4 mr-2"></i> Generating PDF...';
         buttons.download.disabled = true;
         lucide.createIcons();
 
-        if (typeof window.jspdf !== "object") {
-          alert("PDF library is still loading. Please try again in a moment.");
+        try {
+          if (typeof window.jspdf !== "object") {
+            throw new Error("PDF library not loaded");
+          }
+
+          const { jsPDF } = window.jspdf;
+          const input = document.getElementById("printableArea");
+
+          // Clone the printable area
+          const clone = input.cloneNode(true);
+          clone.style.position = "absolute";
+          clone.style.left = "-9999px";
+          clone.style.width = "794px"; // A4 width at 96dpi
+          clone.style.padding = "20px";
+          clone.style.backgroundColor = "#ffffff";
+          clone.style.fontFamily = "Arial, sans-serif";
+          clone.style.color = "#000";
+          clone.style.boxShadow = "none";
+          clone.style.border = "none";
+
+          document.body.appendChild(clone);
+
+          // Wait for fonts/images to load
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+          });
+
+          const options = {
+            scale: 4, // Higher scale for better quality
+            useCORS: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+            windowWidth: clone.scrollWidth,
+            windowHeight: clone.scrollHeight,
+            letterRendering: true,
+            allowTaint: false,
+          };
+
+          const canvas = await html2canvas(clone, options);
+          document.body.removeChild(clone);
+
+          const imgData = canvas.toDataURL("image/png", 1.0);
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            0,
+            pdfWidth,
+            pdfHeight,
+            undefined,
+            "FAST"
+          );
+
+          pdf.setProperties({
+            title: `Gate Pass ${formInputs.ticketNo.value || ""}`,
+            subject: "Railway Workshop Gate Pass",
+            author: "S&T Workshop PTJ",
+            creator: "Gate Pass Generator",
+          });
+
+          pdf.save(`gatepass-${formInputs.ticketNo.value || "details"}.pdf`);
+        } catch (err) {
+          console.error("Error generating PDF:", err);
+          alert("Error generating PDF: " + err.message);
+        } finally {
           buttons.download.innerHTML = originalText;
           buttons.download.disabled = false;
           lucide.createIcons();
-          return;
         }
-
-        const { jsPDF } = window.jspdf;
-        const input = document.getElementById("printableArea");
-
-        html2canvas(input, {
-          scale: 3,
-          useCORS: true,
-          logging: false,
-          backgroundColor: "#FFFFFF",
-          windowWidth: input.scrollWidth,
-          windowHeight: input.scrollHeight,
-        })
-          .then((canvas) => {
-            const imgData = canvas.toDataURL("image/png", 1.0);
-            const pdf = new jsPDF({
-              orientation: "portrait",
-              unit: "mm",
-              format: "a4",
-            });
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`gatepass-${formInputs.ticketNo.value || "details"}.pdf`);
-
-            buttons.download.innerHTML = originalText;
-            buttons.download.disabled = false;
-            lucide.createIcons();
-          })
-          .catch((err) => {
-            console.error("Error generating PDF:", err);
-            alert("Error generating PDF. Check console for details.");
-
-            buttons.download.innerHTML = originalText;
-            buttons.download.disabled = false;
-            lucide.createIcons();
-          });
       });
 
       // Set today's date as default
