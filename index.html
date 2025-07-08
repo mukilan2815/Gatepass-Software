@@ -278,72 +278,45 @@
               <input id="name" type="text" class="input-field" value="Joseph" />
             </div>
             <div>
-              <label for="date" class="block text-sm font-medium mb-1"
-                >Date</label
+              <label class="block text-sm font-medium mb-1"
+                >Date (Auto-generated)</label
               >
-              <input
-                id="date"
-                type="date"
-                class="input-field"
-                value="2023-05-29"
-              />
+              <div
+                class="input-field bg-gray-100 text-gray-700"
+                id="displayCurrentDate"
+              >
+                <!-- Auto-generated date will appear here -->
+              </div>
             </div>
             <div class="time-container">
               <div>
-                <label for="timeOut" class="block text-sm font-medium mb-1"
-                  >Time Out</label
+                <label class="block text-sm font-medium mb-1">Time Out </label>
+                <div
+                  class="input-field bg-gray-100 text-gray-700"
+                  id="displayCurrentTimeOut"
+                >
+                  <!-- Auto-generated time will appear here -->
+                </div>
+              </div>
+              <div>
+                <label for="timeIn" class="block text-sm font-medium mb-1"
+                  >Time In</label
                 >
                 <input
-                  id="timeOut"
-                  type="time"
+                  id="timeIn"
+                  type="text"
                   class="input-field"
-                  value="10:10"
+                  value=""
+                  placeholder="Enter time (e.g. 14:30)"
                 />
               </div>
-              
             </div>
             <div>
               <label for="serialNo" class="block text-sm font-medium mb-1"
                 >Serial No.</label
               >
-              <input
-                id="serialNo"
-                type="text"
-                class="input-field"
-                value=""
-                placeholder="Enter Serial Number"
-              />
-            </div>
-            <div>
-              <label for="approvedBy" class="block text-sm font-medium mb-1"
-                >Approved By</label
-              >
-              <input
-                id="approvedBy"
-                type="text"
-                class="input-field"
-                value=""
-                placeholder="Approving authority"
-              />
-            </div>
-            <!-- Modified section: Added section dropdown next to purpose -->
-            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label for="purpose" class="block text-sm font-medium mb-1"
-                  >उद्देश्य/Purpose</label
-                >
-                <input
-                  id="purpose"
-                  type="text"
-                  class="input-field"
-                  value="delivering the product"
-                />
-              </div>
-              <div>
-                <label for="formSection" class="block text-sm font-medium mb-1"
-                  >Section</label
-                >
-                <select id="formSection" class="input-field">
+              <div class="flex gap-2">
+                <select id="formSection" class="input-field flex-1">
                   <option value="">Select Section</option>
                   <option value="ESED">ESED</option>
                   <option value="BIS">BIS</option>
@@ -362,8 +335,40 @@
                   <option value="PCO/PROGRESS">PCO/PROGRESS</option>
                   <option value="CMT LAB">CMT LAB</option>
                 </select>
+                <input
+                  id="serialNo"
+                  type="text"
+                  class="input-field flex-1"
+                  value=""
+                  placeholder="001"
+                />
               </div>
             </div>
+            <div>
+              <label for="approvedBy" class="block text-sm font-medium mb-1"
+                >Approved By</label
+              >
+              <input
+                id="approvedBy"
+                type="text"
+                class="input-field"
+                value=""
+                placeholder="Approving authority"
+              />
+            </div>
+            <div>
+              <label for="purpose" class="block text-sm font-medium mb-1"
+                >उद्देश्य/Purpose</label
+              >
+              <input
+                id="purpose"
+                type="text"
+                class="input-field"
+                value="delivering the product"
+              />
+            </div>
+            <div></div>
+            <!-- Empty div to maintain grid layout -->
           </div>
           <div class="flex flex-wrap gap-3 mt-6 justify-center">
             <button id="printBtn" class="btn btn-outline">
@@ -425,14 +430,6 @@
               >
               </span>
             </div>
-            <!-- Modified: Replaced dropdown with display field -->
-            <div class="flex items-center justify-end mt-2">
-              <span class="text-sm mr-2 text-gray-700">Section:</span>
-              <span
-                id="displaySection"
-                class="dotted-underline text-center min-w-[100px]"
-              ></span>
-            </div>
           </div>
         </div>
 
@@ -465,7 +462,14 @@
                   10:10
                 </span>
               </div>
-             
+              <div class="flex-1 text-center">
+                <div class="text-xs text-gray-600 mb-1">अंदर / In</div>
+                <span
+                  id="displayTimeIn"
+                  class="dotted-underline font-semibold text-gray-800 block"
+                >
+                </span>
+              </div>
             </div>
           </div>
           <div class="mt-4">
@@ -535,7 +539,12 @@
               >
                 10:10
               </span>
-              hours 
+              hours and shall return&nbsp;by
+              <span
+                id="displayTimeIn2"
+                class="dotted-underline font-semibold inline-block w-20 text-center"
+              >
+              </span>
             </p>
           </div>
 
@@ -585,13 +594,17 @@
       const formInputs = {
         ticketNo: document.getElementById("ticketNo"),
         name: document.getElementById("name"),
-        date: document.getElementById("date"),
-        timeOut: document.getElementById("timeOut"),
         timeIn: document.getElementById("timeIn"),
         purpose: document.getElementById("purpose"),
         serialNo: document.getElementById("serialNo"),
         approvedBy: document.getElementById("approvedBy"),
         section: document.getElementById("formSection"), // Added section input
+      };
+
+      // Auto-generated values
+      const autoValues = {
+        date: null,
+        timeOut: null,
       };
 
       // Display elements
@@ -610,7 +623,6 @@
         purpose: document.getElementById("displayPurpose"),
         purposeAck: document.getElementById("displayPurposeAck"),
         approvedBy: document.getElementById("displayApprovedBy"),
-        section: document.getElementById("displaySection"), // Added section display
       };
 
       // Buttons
@@ -630,8 +642,15 @@
         return `${day}/${month}/${year}`;
       }
 
+      // Format time as HH:MM
+      function formatTime(date = new Date()) {
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        return `${hours}:${minutes}`;
+      }
+
       // Format time from time input or text input
-      function formatTime(timeString) {
+      function formatTimeInput(timeString) {
         if (!timeString) return "";
 
         // Simple validation for time format (HH:MM)
@@ -642,33 +661,63 @@
         return timeString; // Return as is if not in correct format
       }
 
+      // Initialize auto-generated values
+      function initializeAutoValues() {
+        const now = new Date();
+        autoValues.date = now;
+        autoValues.timeOut = now;
+
+        // Update display elements for auto-generated fields
+        document.getElementById("displayCurrentDate").textContent = formatDate(
+          now.toISOString().split("T")[0]
+        );
+        document.getElementById("displayCurrentTimeOut").textContent =
+          formatTime(now);
+      }
+
+      // Combine section and serial number
+      function getCombinedSerialNo() {
+        const section = formInputs.section.value;
+        const serialNo = formInputs.serialNo.value;
+
+        if (section && serialNo) {
+          return `${section} - ${serialNo}`;
+        } else if (section) {
+          return section;
+        } else if (serialNo) {
+          return serialNo;
+        }
+        return "";
+      }
+
       // Update all display elements based on form inputs
       function updateGatepassDisplay() {
+        // Get combined serial number
+        const combinedSerialNo = getCombinedSerialNo();
+
         // Update all fields in real-time
-        displayElements.date.textContent = formInputs.date.value
-          ? formatDate(formInputs.date.value)
+        displayElements.date.textContent = autoValues.date
+          ? formatDate(autoValues.date.toISOString().split("T")[0])
           : "______";
-        displayElements.serialNo.textContent =
-          formInputs.serialNo.value || "______";
-        displayElements.serialNoAck.textContent =
-          formInputs.serialNo.value || "______";
+        displayElements.serialNo.textContent = combinedSerialNo || "______";
+        displayElements.serialNoAck.textContent = combinedSerialNo || "______";
         displayElements.ticketNo.textContent =
           formInputs.ticketNo.value || "______";
         displayElements.ticketNo3.textContent =
           formInputs.ticketNo.value || "______";
         displayElements.name.textContent = formInputs.name.value || "______";
         displayElements.name3.textContent = formInputs.name.value || "______";
-        displayElements.timeOut.textContent = formInputs.timeOut.value
-          ? formatTime(formInputs.timeOut.value)
+        displayElements.timeOut.textContent = autoValues.timeOut
+          ? formatTime(autoValues.timeOut)
           : "______";
-        displayElements.timeOut2.textContent = formInputs.timeOut.value
-          ? formatTime(formInputs.timeOut.value)
+        displayElements.timeOut2.textContent = autoValues.timeOut
+          ? formatTime(autoValues.timeOut)
           : "______";
         displayElements.timeIn.textContent = formInputs.timeIn.value
-          ? formatTime(formInputs.timeIn.value)
+          ? formatTimeInput(formInputs.timeIn.value)
           : "______";
         displayElements.timeIn2.textContent = formInputs.timeIn.value
-          ? formatTime(formInputs.timeIn.value)
+          ? formatTimeInput(formInputs.timeIn.value)
           : "______";
         displayElements.purpose.textContent =
           formInputs.purpose.value || "______";
@@ -676,9 +725,10 @@
           formInputs.purpose.value || "______";
         displayElements.approvedBy.textContent =
           formInputs.approvedBy.value || "__________";
-        displayElements.section.textContent =
-          formInputs.section.value || "______"; // Added section display
       }
+
+      // Initialize auto-generated values and display
+      initializeAutoValues();
 
       // Initialize the display with current values
       updateGatepassDisplay();
@@ -780,12 +830,6 @@
           lucide.createIcons();
         }
       });
-
-      // Set today's date as default
-      const today = new Date();
-      const formattedDate = today.toISOString().split("T")[0];
-      formInputs.date.value = formattedDate;
-      updateGatepassDisplay();
     </script>
   </body>
 </html>
